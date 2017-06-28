@@ -2,6 +2,10 @@
 Trabalho Final: Mecanismos de Criptografia!
 """
 
+#Inculi a biblioteca para buscar valores randomicamente em determinado
+#formato (ex.: p = random.getrandbits(n) buscara um valor de n bits para p).
+import random
+
 #Inclui a biblioteca com o algoritmo de hashing utilizado
 #no modo de assinatura por El Gamal:
 from hashlib import sha224
@@ -216,7 +220,7 @@ def comb_decriptacao_verificacao_menu():
     pass
 
 #
-#
+#-----------------------------------------------------------------------------------------------------------------
 #
 
 #Missing
@@ -227,8 +231,28 @@ def chaves_assinatura():
 
 #Missing
 def chaves_RSA():
-    '''.'''
+    '''Gera tres chaves "n", "e" (publica) e "d" (privada). A cahave "n" e igual ao produto entre
+    dois primos de 128 bits "p" e "q". A chave "e" '''
 
+    p,q = 6,6
+    #Define dois numeros que certamente sao compostos para que
+    #eles caiam no caso de randomizacao para numeros de 128 bits
+
+    while (miller_rabin(p,2) is True):                                          # Nestes casos foi utilizado o algoritmo de
+        p = random.getrandbits(128) #Obtem um valor de 128 bits inteiro         #Miller-Rabbin ou inves do algoritmo de Lucas
+    while (miller_rabin(q,2) is True):                                          #devido a sua velocidade de execucao, uma vez que
+        q = random.getrandbits(128) #Obtem um valor de 128 bits inteiro         #este nao depende de uma fatoracao.
+
+    n = p * q #Efetua o calculo da chave parcial "n" (publica).
+    phi_n = (p-1) * (q-1)
+    #Considerando que a ordem de um grupo U(n) sera a ordem de um grupo
+    #U(p*q) , o valor phi de n sera o produto das ordens (phi_p e phi_q)
+    #dos respectivos primos. Portanto, phi_n = phi_p * phi_q = (p-1)*(q-1).
+
+    e = 2
+    while (e < phi_n) and (euclidiano(e, phi_n) is False):
+        e += 1
+    #Calcula a funcao
     pass
 
 #Missing
@@ -278,6 +302,52 @@ def verificacao_assinatura_pura(chave_publica_verificacao):
     pass
 
 
-
+#------------------------------------------------------------------------------------------------------------
 
 #Funcoes previamente utilizadas nos trabalhos semanais:
+
+def miller_rabin(n, b):
+    '''.'''
+
+    r,k = 1,0
+    q = (m - 1)
+
+    while (q % 2 == 0):
+        q = q/2
+        k += 1
+    l = k
+    e = q
+
+    while (q >= 0):
+        i = q%2
+        if (q == 0): break
+        if (i == 1):
+            r = (r*a) % m
+            q = (q-1) / 2
+        else:
+            q = q/2
+        a = (a*a) % m
+
+    while (k > 0):
+        k -= 1
+
+        if (r == m-1) or (k == (l-1) and r == 1):
+            return False
+        if (k == 0):
+            return True
+
+        e = (e*2) % m
+        r = (r*r) % m
+
+    pass
+
+def euclidiano(a, b):
+    '''Implementa o algoritmo euclidiano para dois valores a e b. Retorna 1 se ha coprimalidade.'''
+    while b > 0:
+        aux = b
+        b = a % b
+        a = aux
+        if (b == 1):
+            return True
+
+    return False
