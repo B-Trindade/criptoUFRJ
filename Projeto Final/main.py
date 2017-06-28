@@ -136,13 +136,30 @@ def get_key():
     #Obtendo a resposta do usuario:
     modus = input()
 
-    #Verificando a escolha do usuario:
     if (modus == 1):
         #Adequar para que key receba o valor em hexadecimal
         key = input()
+        #O valor de entrada eh hexadecimal, para transforma-lo em decimal, use:
+        # i = (key, 16)
     else:
         print("Insira o nome do arquivo para leitura da chave.")
         #Fazer codigo capaz de ler valores de arquivos.
+        # file_ = open("filename", "r") #mesma coisa de C aqui
+                # r para read
+                # w para write
+                # a para append
+                # r+ para ler e escrever
+        # para fechar o arquivo, usa-se:
+        # file_.close() #so use quando tiver acabado de usar o arquivo completamente
+        # uma vez fechado, nao eh possivel abrir de novo durante o programa
+
+        # TUDO QUE VOCE PRECISA SABER PARA MEXER COM ARQUIVO EM PYTHON #
+            # utilizando o mesmo file_ como la de cima, use:
+            # reading = file_.read() para colocar todo o conteudo do arquivo na string reading
+            # reading = file_.read(n) para ler n caracteres do arquivo e armazenar em reading
+            # reading = file_.readline(n) para ler o que ta escrito na linha n do arquivo e armazena em reading
+
+            # writing = file_.write("o que vc quiser escrever") para escrever no arquivo - uma unica linha
 
     return key
 
@@ -470,3 +487,67 @@ def modulo(n,m):
 	else:
 		result = num % mod
 	return result
+
+def inversomodular(a, mod):
+    modfixo = mod
+    x1, y = 1
+    x, y1 = 0
+    while a%mod > 0:
+        r = a%mod
+        q = a/mod
+        if r != 0:
+            a = mod
+            mod = r
+            xr = x1
+            x1 = x
+            x = xr-q*x
+            yr = y1
+            y1 = y
+            y = yr-q*y
+    if r == 1:
+        while x < 0:
+            i = 1
+            x = x + modfixo*i
+            i = i + 1
+        if x > modfixo:
+            x = x%modfixo
+    return x
+
+def potenciamodular(a, e, mod):
+    r = 1
+    while e > 0:
+        if e%2 == 1:
+            print r, a, e, 'S'
+            r = (r*a)%mod
+            e = (e-1)/2
+        else:
+            print r, a, e, 'N'
+            e = e/2
+        a = (a*a)%mod
+    return r
+
+def decriptaElGamal(p, a, s, t): # sendo p o primo parametro publico do El Gamal, a eh o valor calculo nos steps, s e t sao os valores dados para decriptacao do bloco
+    slinha = potenciamodular(s, p-1-a, p)
+    return (slinha*t)%p
+
+def stepsElGamal(g, h, p):
+    m = int((p-1)**0.5) + 1
+    j = 0
+    gj = [] # lista com os valores de j
+    # INICIO DO BABY STEP #
+    while j < m:
+        print j, (g**j)%p
+        gj.append((g**j)%p)
+        j = j + 1
+    # FIM DO BABY STEP #
+    # INICIO DO GIANT STEP #
+    glinha = inversomodular(g, p) # calculo o inverso de g
+    t = potenciamodular(glinha, m, p) # calculo t usando o RAE IMPAR (pego o ultimo valor)
+    i = 0
+    while (h*(t**i))%p not in gj: #faco o loop ate achar um valor de h*t^i (mod p) que esteja na lista dos valores de j
+        print i, (h*(t**i))%p
+        i = i+1
+    #print i, (h*(t**i))%p # como o loop acaba quando eu acho o valor, eu printo o valor de i que encontrou o valor e o tal valor
+    #print i, gj.index((h*(t**i))%p) # aqui printo i novamente e o valor em que h*t^i (mod p) se encontra na lista
+    a = i*m + gj.index((h*(t**i))%p) # que eh o valor que satisfaz a equacao g^a = h (mod p)
+    return a
