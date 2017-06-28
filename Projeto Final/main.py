@@ -309,7 +309,7 @@ def chaves_RSA():
 
         print("Arquivos produzidos com sucesso!")
         print("Redirecionando para o menu principal...")
-        
+
     #-----------------------Fim das opcoes interativas--------------------------
 
     return menu_principal()
