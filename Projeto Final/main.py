@@ -229,7 +229,7 @@ def chaves_assinatura():
 
     pass
 
-#Missing
+#Missing (Make file saving method and hexadecimal converting method)
 def chaves_RSA():
     '''Gera tres chaves "n", "e" (publica) e "d" (privada). A cahave "n" e igual ao produto entre
     dois primos de 128 bits "p" e "q".'''
@@ -287,18 +287,36 @@ def chaves_RSA():
         print("Chave Privada: n = " + str(n) + "; d = " + str(d))
         print(" ")
 
-        return menu_principal()
     elif (modus == 2):
-        #Salvar nos arquivos!!!
 
-        return menu_principal()
+        print("Informe o nome do arquivo que ira conter as chaves publicas.")
+        nome_arq_ChavePublica = raw_input()
+        print(" ")
+
+        print("Informe o nome do arquivo que ira conter as chaves privadas.")
+        nome_arq_ChavePrivada = raw_input()
+        print(" ")
+
+        with open(nome_arq_ChavePublica, 'w') as arq_ChavePublica:
+            arq_ChavePublica.write("n = " + str(n) + '\n')
+            arq_ChavePublica.write("e = " + str(e) + '\n')
+        arq_ChavePublica.closed
+
+        with open(nome_arq_ChavePrivada, 'w') as arq_ChavePrivada:
+            arq_ChavePrivada.write("n = " + str(n) + '\n')
+            arq_ChavePrivada.write("d = " + str(d) + '\n')
+        arq_ChavePrivada.closed
+
+        print("Arquivos produzidos com sucesso!")
+        print("Redirecionando para o menu principal...")
+        
     #-----------------------Fim das opcoes interativas--------------------------
 
-    pass
+    return menu_principal()
 
 #Missing
 def chaves_ElGamal():
-    '''.'''
+    ''''''
 
     pass
 
