@@ -232,18 +232,24 @@ def chaves_assinatura():
 #Missing
 def chaves_RSA():
     '''Gera tres chaves "n", "e" (publica) e "d" (privada). A cahave "n" e igual ao produto entre
-    dois primos de 128 bits "p" e "q". A chave "e" '''
+    dois primos de 128 bits "p" e "q".'''
 
     p,q = 6,6
     #Define dois numeros que certamente sao compostos para que
     #eles caiam no caso de randomizacao para numeros de 128 bits
 
-    while (miller_rabin(p,2) is True):                                          # Nestes casos foi utilizado o algoritmo de
-        p = random.getrandbits(128) #Obtem um valor de 128 bits inteiro         #Miller-Rabbin ou inves do algoritmo de Lucas
-    while (miller_rabin(q,2) is True):                                          #devido a sua velocidade de execucao, uma vez que
-        q = random.getrandbits(128) #Obtem um valor de 128 bits inteiro         #este nao depende de uma fatoracao.
+    while (miller_rabin(p,2) is True):
+        p = random.getrandbits(128) #Obtem um valor de 128 bits inteiro
+    while (miller_rabin(q,2) is True):
+        q = random.getrandbits(128) #Obtem um valor de 128 bits inteiro
 
-    n = p * q #Efetua o calculo da chave parcial "n" (publica).
+    # Nestes casos foi utilizado o algoritmo de
+    #Miller-Rabbin ou inves do algoritmo de Lucas
+    #devido a sua velocidade de execucao, uma vez que
+    #este nao depende de uma fatoracao.
+
+    n = (p * q)
+    #Efetua o calculo da chave parcial "n" (publica).
     phi_n = (p-1) * (q-1)
     #Considerando que a ordem de um grupo U(n) sera a ordem de um grupo
     #U(p*q) , o valor phi de n sera o produto das ordens (phi_p e phi_q)
@@ -252,7 +258,42 @@ def chaves_RSA():
     e = 2
     while (e < phi_n) and (euclidiano(e, phi_n) is False):
         e += 1
-    #Calcula a funcao
+    #Calcula a chave publica "e" de acordo com as devidas restricoes.
+
+    d = euclidiano_estendido(e, phi_n)
+    if (d < 0):
+        d = modulo(e, phi_n)
+    else:
+        d = d % phi_n
+    #Calcula a chava privada "d" de acordo com o metodo aprendido em sala
+
+    n = converte_para_hexadecimal(n)
+    e = converte_para_hexadecimal(e)
+    d = converte_para_hexadecimal(d)
+
+    #-------------Fim do algoritmo para a criacao de chaves RSA ----------------
+
+    print(" ")
+    print("1) Imprimir os valores gerados no terminal.")
+    print("2) Armazenar os valores gerados em dois arquivos (um para cada par de chaves).")
+    print(" ")
+
+    #Recebendo o comando do usuario.
+    modus = input()
+
+    #Verificando a escolha do usuario:
+    if (modus == 1):
+        print("Chave Publica: n = " + str(n) + "; e = " + str(e))
+        print("Chave Privada: n = " + str(n) + "; d = " + str(d))
+        print(" ")
+
+        return menu_principal()
+    elif (modus == 2):
+        #Salvar nos arquivos!!!
+
+        return menu_principal()
+    #-----------------------Fim das opcoes interativas--------------------------
+
     pass
 
 #Missing
@@ -300,6 +341,23 @@ def verificacao_assinatura_pura(chave_publica_verificacao):
     '''.'''
 
     pass
+
+#------------------------------------------------------------------------------------------------------------
+#Funcoes para resultados intermediarios e adequacao ao formato desejado.
+#Nao consituem funcoes chamadas diretamente por uma escolha do usuario,
+#entretanto, aparecem dentro de outras funcoes.(NAO PERTENCEM AS FUNCOES PREVIAS)
+
+#Missing
+def converte_para_hexadecimal(x):
+    '''Recebe um valor inteiro "x" e converte para a base 16 (hexadecimal).'''
+
+    return hexa_x
+
+#Missing
+def converte_para_decimal(x):
+    '''Recebe um valor na base 16 (hexadecimal) e converte para a base 10 (decimal).'''
+
+    return dec_x
 
 
 #------------------------------------------------------------------------------------------------------------
@@ -351,3 +409,46 @@ def euclidiano(a, b):
             return True
 
     return False
+
+def euclidiano_estendido(a, b):
+    '''Implementa o algoritmo euclidiano estendido para dois valores a e b.'''
+    x2 = 1
+    x1 = 0
+    y2 = 0
+    y1 = 1
+
+    while b > 0:
+        quociente = a // b
+
+        x = x2 - (x1 * quociente)
+        x2 = x1
+        x1 = x
+
+        y = y2 - (y1 * quociente)
+        y2 = y1
+        y1 = y
+
+        aux = b
+        b = a % b
+        a = aux
+
+        if b != 0:
+            true_x = x
+
+    return true_x
+
+#Missing
+def modulo(n,m):
+    '''.'''
+	resultado = 0
+	num = n
+	mod = m
+	if(num < 0):
+		num *= -1
+		if(num < mod):
+			resultado = mod - num
+		else:
+			resultado = num % mod
+	else:
+		result = num % mod
+	return result
