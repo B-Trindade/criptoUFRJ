@@ -111,7 +111,7 @@ def encriptacao_pura_menu():
 
     #Obtendo o nome do arquivo a ser encriptado:
     print("Insira, agora, o nome do arquivo a ser encriptado: ")
-    arquivo_fonte = input()
+    arquivo_fonte = str(raw_input())
     print(" ")
 
     #Verificando a escolha do usuario:
@@ -138,11 +138,18 @@ def get_key():
 
     if (modus == 1):
         #Adequar para que key receba o valor em hexadecimal
+        print("Insira o valor de 'n'.")
         key = input()
         #O valor de entrada eh hexadecimal, para transforma-lo em decimal, use:
         # i = (key, 16)
     else:
         print("Insira o nome do arquivo para leitura da chave.")
+        nome_arq_ChavePublica = raw_input()
+
+        with open(nome_arq_ChavePublica, 'r') as arq_ChavePublica:
+            arq_ChavePublica.read()
+
+
         #Fazer codigo capaz de ler valores de arquivos.
         # file_ = open("filename", "r") #mesma coisa de C aqui
                 # r para read
@@ -246,7 +253,7 @@ def chaves_assinatura():
 
     pass
 
-#Missing (Make file saving method and hexadecimal converting method)
+#Missing (hexadecimal converting method)
 def chaves_RSA():
     '''Gera tres chaves "n", "e" (publica) e "d" (privada). A cahave "n" e igual ao produto entre
     dois primos de 128 bits "p" e "q".'''
@@ -333,8 +340,26 @@ def chaves_RSA():
 
 #Missing
 def chaves_ElGamal():
-    ''''''
+    '''.'''
+    p,q = 6,6   #Para evitar um processo demorado usa-se o fato de que p = 2q +1
+    c,a = 0,0
+    g = 2
 
+    while ((p.bit_length() != 256 or q.bit_length() != 255) or (miller_rabin(q,2) is False or miller_rabin(p,2) is False)):
+        q = random.getrandbits(255)
+        p = 2*q + 1
+    while (potenciamodular(g, a , p) == 1):
+        g += 1
+
+    a = random.randint(2, p-2)
+    c = potenciamodular(g, a, p)
+
+    c = converte_para_hexadecimal(c)
+    a = converte_para_hexadecimal(a)
+    p = converte_para_hexadecimal(p)
+    g = converte_para_hexadecimal(g)
+
+    #----------------------------------------------------------------------------------------------------------
     pass
 
 #Missing
@@ -472,7 +497,7 @@ def euclidiano_estendido(a, b):
 
     return true_x
 
-#Missing
+#Missing description
 def modulo(n,m):
     '''.'''
 	resultado = 0
@@ -488,6 +513,7 @@ def modulo(n,m):
 		result = num % mod
 	return result
 
+#Missing description
 def inversomodular(a, mod):
     modfixo = mod
     x1, y = 1
@@ -513,23 +539,24 @@ def inversomodular(a, mod):
             x = x%modfixo
     return x
 
+#Missing description
 def potenciamodular(a, e, mod):
     r = 1
     while e > 0:
         if e%2 == 1:
-            print r, a, e, 'S'
             r = (r*a)%mod
             e = (e-1)/2
         else:
-            print r, a, e, 'N'
             e = e/2
         a = (a*a)%mod
     return r
 
+#Missing description
 def decriptaElGamal(p, a, s, t): # sendo p o primo parametro publico do El Gamal, a eh o valor calculo nos steps, s e t sao os valores dados para decriptacao do bloco
     slinha = potenciamodular(s, p-1-a, p)
     return (slinha*t)%p
 
+#Missing description
 def stepsElGamal(g, h, p):
     m = int((p-1)**0.5) + 1
     j = 0
